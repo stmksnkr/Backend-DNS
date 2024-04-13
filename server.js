@@ -21,8 +21,10 @@ app.use(cors());
 
 const route53Client = new Route53Client({ region: "ap-southeast-2" });
 // Define a GET endpoint to list hosted zones
+
 app.get("/hostedzones", async (req, res) => {
   try {
+    
     const data = await route53Client.send(new ListHostedZonesCommand({}));
     // const modifiedData = data.HostedZones.map(zone => {
     //     return {
@@ -178,5 +180,8 @@ app.post("/dns", async (req, res) => {
 // Start the Express server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  app.get('/', (req, res) => {
+    res.send('Hello....');
+  });
   console.log(`Server is running on port ${PORT}`);
 });
