@@ -5,9 +5,5 @@
 ],
 "routes": [
 { "src": "/.*", "dest": "/index.js" }
-],
-"env": {
-"OPENAI_API_KEY": "@openai_api_key",
-"YH_FINANCE_API_KEY": "@yh_finance_api_key"
-}
+]
 }
