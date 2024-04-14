@@ -142,7 +142,7 @@ app.post("/dns", async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   app.get('/', (req, res) => {
-    res.send('Hello....');
+    res.send({message:'Hello.... api.... working !!!!!!'});
   });
   console.log(`Server is running on port ${PORT}`);
 });
