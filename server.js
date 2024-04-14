@@ -139,7 +139,7 @@ app.post("/dns", async (req, res) => {
 
 
 // Start the Express server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   app.get('/', (req, res) => {
     res.send('Hello....');
