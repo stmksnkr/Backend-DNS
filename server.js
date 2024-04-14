@@ -24,21 +24,8 @@ const route53Client = new Route53Client({ region: "ap-southeast-2" });
 
 app.get("/hostedzones", async (req, res) => {
   try {
-    
     const data = await route53Client.send(new ListHostedZonesCommand({}));
-    // const modifiedData = data.HostedZones.map(zone => {
-    //     return {
-    //       Id: zone.Id,
-    //       name: zone.Name,
-    //       Type: zone.Type// Assuming 'Name' is the 'type' you mentioned
-    //     };
-    //   });
-    // const hostedZoneIds = data.HostedZones.map(zone => zone.Id);
-    // console.log(hostedZoneIds)
     res.json(data.HostedZones);
-    // res.json(modifiedData);
-
-
   } catch (err) {
     console.log("Error:", err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -46,13 +33,19 @@ app.get("/hostedzones", async (req, res) => {
 });
 
 app.get("/record", async (req, res) => {
+  const hostedZoneId = req.query.hostedZoneId; // Get the hostedZoneId from the query parameter
+    if (!hostedZoneId) {
+      return res.status(400).json({ error: 'HostedZoneId parameter is required' });
+    }
+  
   try {
     const data = await route53Client.send(
       new ListResourceRecordSetsCommand({
-        HostedZoneId: "Z091983730D76Y9I6FSGS",
+        HostedZoneId:hostedZoneId,
       })
     );
-    res.json(data);
+    // console.log(data)
+    res.json(data.ResourceRecordSets);
     
   } catch (err) {
     console.log("Error:", err);
@@ -84,32 +77,6 @@ app.post("/create", async (req, res) => {
     console.error("Error creating hosted zone:", error);
     res.status(500).json({ success: false, message: "Error creating hosted zone" });
 }
-
-  // const input = {
-  //   Name: "dname.com",
-  //   VPC: {
-  //     VPCRegion:"ap-southeast-2",
-  //     VPCId: "vpc-04d5146a78b42e358",
-  //   },
-  //   CallerReference: "280abbdb-7ac6-4cb9-83a0-ebfe79a25d7c", // required
-  //   HostedZoneConfig: {
-  //     // HostedZoneConfig
-  //     Comment: "STRING_VALUE",
-  //     PrivateZone: true || false,
-  //   },
-  //   DelegationSetId: "STRING_VALUE",
-  // };
-  // const command = new CreateHostedZoneCommand(input);
-
-  // try {
-  //   await route53Client.send(command);
-  //   res.status(200).json({ message: "DNS record created successfully" });
-  // } catch (error) {
-  //   console.error("Error creating DNS record:", error);
-  //   res
-  //     .status(500)
-  //     .json({ message: "Failed to create DNS record", error: error.message });
-  // }
 });
 
 
@@ -130,12 +97,6 @@ app.delete('/delete/:hostedZoneId', async (req, res) => {
       res.status(500).json({ success: false, message: "Error deleting hosted zone" });
   }
 });
-
-
-
-
-
-
 
 
 app.post("/dns", async (req, res) => {
