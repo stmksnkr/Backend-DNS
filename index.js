@@ -32,26 +32,26 @@ app.get("/hostedzones", async (req, res) => {
   }
 });
 
-// app.get("/record", async (req, res) => {
-//   const hostedZoneId = req.query.hostedZoneId; // Get the hostedZoneId from the query parameter
-//     if (!hostedZoneId) {
-//       return res.status(400).json({ error: 'HostedZoneId parameter is required' });
-//     }
+app.get("/record", async (req, res) => {
+  const hostedZoneId = req.query.hostedZoneId; // Get the hostedZoneId from the query parameter
+    if (!hostedZoneId) {
+      return res.status(400).json({ error: 'HostedZoneId parameter is required' });
+    }
   
-//   try {
-//     const data = await route53Client.send(
-//       new ListResourceRecordSetsCommand({
-//         HostedZoneId:hostedZoneId,
-//       })
-//     );
-//     // console.log(data)
-//     res.json(data.ResourceRecordSets);
+  try {
+    const data = await route53Client.send(
+      new ListResourceRecordSetsCommand({
+        HostedZoneId:hostedZoneId,
+      })
+    );
+    // console.log(data)
+    res.json(data.ResourceRecordSets);
     
-//   } catch (err) {
-//     console.log("Error:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+  } catch (err) {
+    console.log("Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // app.post("/create", async (req, res) => {
 
