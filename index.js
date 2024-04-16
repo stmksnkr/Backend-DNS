@@ -22,15 +22,15 @@ app.use(cors());
 
 const route53Client = new Route53Client({ region: "ap-southeast-2" });
 
-// app.get("/hostedzones", async (req, res) => {
-//   try {
-//     const data = await route53Client.send(new ListHostedZonesCommand({}));
-//     res.json(data.HostedZones);
-//   } catch (err) {
-//     console.log("Error:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
+app.get("/hostedzones", async (req, res) => {
+  try {
+    const data = await route53Client.send(new ListHostedZonesCommand({}));
+    res.json(data.HostedZones);
+  } catch (err) {
+    console.log("Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // app.get("/record", async (req, res) => {
 //   const hostedZoneId = req.query.hostedZoneId; // Get the hostedZoneId from the query parameter
