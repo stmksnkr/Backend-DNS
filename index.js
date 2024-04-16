@@ -12,6 +12,7 @@ const {
   ChangeResourceRecordSetsCommand,
   CreateHostedZoneCommand,
   DeleteHostedZoneCommand,
+  DeleteResourceRecordSetCommand,
 } = require("@aws-sdk/client-route-53");
 
 const app = express();
@@ -99,33 +100,37 @@ app.delete('/delete/:hostedZoneId', async (req, res) => {
 });
 
 
-app.post("/dns", async (req, res) => {
-  const { domain, recordName, recordType, recordValue } = req.body;
+app.post("/dns/:hostedZoneId", async (req, res) => {
+  const hostedZoneId = req.params.hostedZoneId;
+  const { subdomain, domain, type, value } = req.body;
+  const domainName = `${subdomain}.${domain}`;
+  if (!domainName || !value || !type) {
+    return res.status(400).json({ error: 'Missing domainName, value, or type in request body' });
+  }
 
   const params = {
-    HostedZoneId: "Z06528153MWMTCIJIIBZ1",
+    HostedZoneId: hostedZoneId, 
     ChangeBatch: {
       Changes: [
         {
-          Action: "CREATE",
+          Action: 'CREATE',
           ResourceRecordSet: {
-            Name: recordName + "." + domain,
-            Type: recordType,
-            TTL: 300,
+            Name: domainName,
+            Type: type,
+            TTL: 300, // Time to Live in seconds
             ResourceRecords: [
               {
-                Value: recordValue,
-              },
-            ],
-          },
-        },
-      ],
-    },
+                Value: value
+              }
+            ]
+          }
+        }
+      ]
+    }
   };
-
   try {
-    await route53Client.send(new ChangeResourceRecordSetsCommand(params));
-    res.status(200).json({ message: "DNS record created successfully" });
+    data = await route53Client.send(new ChangeResourceRecordSetsCommand(params));
+    res.status(200).json({ message: "DNS record created successfully"});
   } catch (error) {
     console.error("Error creating DNS record:", error);
     res
@@ -136,13 +141,11 @@ app.post("/dns", async (req, res) => {
 
 
 
-
-
 // Start the Express server
+app.get('/', (req, res) => {
+  res.send({message:'Hello.... api.... working !!!!!!'});
+});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  app.get('/', (req, res) => {
-    res.send({message:'Hello.... api.... working !!!!!!'});
-  });
   console.log(`Server is running on port ${PORT}`);
 });
