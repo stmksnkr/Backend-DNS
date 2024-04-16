@@ -102,8 +102,9 @@ app.delete('/delete/:hostedZoneId', async (req, res) => {
 app.post("/dns/:hostedZoneId", async (req, res) => {
   const hostedZoneId = req.params.hostedZoneId;
   const { subdomain, domain, type, value } = req.body;
-  const domainName = `${subdomain}.${domain}`;
-  if (!domainName || !value || !type) {
+  const domainName = subdomain ? `${subdomain}.${domain}` : domain;
+  
+  if (!value || !type) {
     return res.status(400).json({ error: 'Missing domainName, value, or type in request body' });
   }
 
